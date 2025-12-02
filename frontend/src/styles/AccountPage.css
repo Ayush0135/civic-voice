@@ -1,0 +1,155 @@
+.account-page {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.account-card {
+  padding: 2rem;
+}
+
+.account-header {
+  margin-bottom: 1.5rem;
+}
+
+.account-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 10px;
+  color: #667eea;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.account-back-btn:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.account-back-btn:active {
+  transform: translateY(0);
+}
+
+.account-header-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.account-header-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.account-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  flex-shrink: 0;
+}
+
+.account-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.account-header p {
+  margin: 0.5rem 0 0;
+  font-size: 0.9375rem;
+  color: #666;
+}
+
+.account-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.account-email {
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.account-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.account-tab {
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  padding: 0.625rem 1rem;
+  background: white;
+  color: #666;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.account-tab:hover {
+  background: #f8f9ff;
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.account-tab.active {
+  background: #e0e7ff;
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.account-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.account-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+@media (max-width: 768px) {
+  .account-card {
+    padding: 1.5rem;
+  }
+
+  .account-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .account-identity {
+    align-items: flex-start;
+  }
+}
