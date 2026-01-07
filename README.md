@@ -26,7 +26,7 @@ A comprehensive civic complaint management platform that enables citizens to rep
 | **Express** | 4.19.2 | Web application framework |
 | **MongoDB** | 6.0+ | NoSQL database |
 | **Mongoose** | 8.5.1 | MongoDB object modeling |
-| **OpenAI API** | 6.9.1 | AI-powered text processing |
+| **Google Gemini API** | Latest | AI-powered text processing |
 | **JWT** | 9.0.2 | Authentication tokens |
 | **Bcrypt.js** | 2.4.3 | Password hashing |
 | **Multer** | 1.4.5 | File upload handling |
@@ -141,11 +141,11 @@ PORT=4000
 # Allowed Frontend Origins (comma-separated)
 CLIENT_ORIGINS=http://localhost:5173,http://localhost:5174
 
-# OpenAI API Key (required for AI text processing)
-OPENAI_API_KEY=sk-your-openai-api-key-here
+# Google Gemini API Key (required for AI text processing)
+GEMINI_API_KEY=your-gemini-api-key-here
 ```
 
-> **Note**: Get your OpenAI API key from https://platform.openai.com/api-keys
+> **Note**: Get your Google Gemini API key from https://aistudio.google.com/app/apikey
 
 #### Step 4: Seed the Database
 
@@ -327,7 +327,7 @@ npx kill-port 4000
 npx kill-port 5173
 ```
 
-#### OpenAI API Errors
+#### Google Gemini API Errors
 - Verify your API key is valid
 - Check you have sufficient credits
 - Ensure the key has proper permissions
@@ -417,7 +417,7 @@ This project is for educational and demonstration purposes.
 │         │              ┌────────────┴────────────┐               │               │
 │         │              │                         │               │               │
 │         │       ┌──────┴──────┐          ┌───────┴───────┐       │               │
-│         │       │   Multer    │          │   OpenAI API  │       │               │
+│         │       │   Multer    │          │   Gemini API  │       │               │
 │         │       │(File Upload)│          │ (AI Processing│       │               │
 │         │       └──────┬──────┘          └───────┬───────┘       │               │
 │         │              │                         │               │               │
@@ -460,7 +460,7 @@ This project is for educational and demonstration purposes.
 | Axios Client | Express Router | HTTPS REST API | Client-server communication |
 | Express Router | Auth Middleware | Internal | JWT token validation |
 | Express Router | Controllers | Internal | Route handling |
-| Issues Controller | OpenAI API | HTTPS | AI-powered text extraction |
+| Issues Controller | Gemini API | HTTPS | AI-powered text extraction |
 | Issues Controller | Multer | Internal | Evidence file uploads |
 | Multer | Local Storage | File I/O | Store uploaded files |
 | Controllers | Mongoose ODM | Internal | Database operations |
@@ -473,7 +473,7 @@ This project is for educational and demonstration purposes.
 3. **API Request** → Axios sends authenticated requests to backend
 4. **Authentication** → JWT middleware validates user tokens
 5. **Business Logic** → Controllers process requests
-6. **AI Processing** → OpenAI extracts structured data from text (General Input)
+6. **AI Processing** → Gemini extracts structured data from text (General Input)
 7. **Data Storage** → Mongoose persists data to MongoDB
 8. **Response** → Backend returns JSON response to frontend
 
@@ -517,7 +517,7 @@ This project is for educational and demonstration purposes.
 - **User Management**: View and manage citizen and department accounts
 - **Issue Management**: Access to all issues across departments
 - **Department Management**: Add, edit, and configure departments
-- **AI-Powered General Input**: Natural language issue processing using GPT-4o
+- **AI-Powered General Input**: Natural language issue processing using Gemini 1.5 Flash
   - Automatically extracts: title, category, severity, description
   - Evidence file attachment support (JPG, PNG, PDF, MP4 - max 50MB each, up to 3 files)
   - Auto-routes issues to appropriate departments
@@ -565,3 +565,7 @@ This project is for educational and demonstration purposes.
 | `alerts` | System-wide announcements |
 
 ---
+
+## 👨‍💻 Developed By
+
+**Ayush**

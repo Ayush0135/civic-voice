@@ -271,26 +271,26 @@ const AdminPage = () => {
 
     try {
       let evidenceUrls = [];
-      
+
       // Upload files if there are any
       if (pendingEvidenceFiles.length > 0) {
         const formData = new FormData();
         pendingEvidenceFiles.forEach(file => {
           formData.append('files', file);
         });
-        
+
         const uploadRes = await api.post('/uploads/multiple', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        
+
         evidenceUrls = uploadRes.data.files.map(f => f.url);
       }
-      
+
       const payload = { ...structuredData, evidenceUrls };
       await api.post('/admin/create-complaint', payload);
 
       setGeneralInputMessage('Complaint submitted successfully to the common channel!');
-      
+
       // Reset form completely
       setTimeout(() => {
         setGeneralInput('');
@@ -300,7 +300,7 @@ const AdminPage = () => {
         setPendingEvidenceFiles([]);
         setEvidenceUploadErrors([]);
       }, 2000);
-      
+
       // Refresh issues list to show the newly created complaint
       dispatch(fetchIssues());
     } catch (err) {
@@ -317,7 +317,7 @@ const AdminPage = () => {
   const handleEvidenceFileSelect = (e) => {
     const files = Array.from(e.target.files);
     const errors = [];
-    
+
     const validFiles = files.filter((file) => {
       // Check file type
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf', 'video/mp4'];
@@ -514,28 +514,28 @@ const AdminPage = () => {
         </div>
 
         <div className="admin-tabs fade-in">
-          <button 
+          <button
             className={`admin-tab ${activeTab === 'complaints' ? 'active' : ''}`}
             onClick={() => setActiveTab('complaints')}
           >
             <FileText size={18} />
             Complaints Management
           </button>
-          <button 
+          <button
             className={`admin-tab ${activeTab === 'general-input' ? 'active' : ''}`}
             onClick={() => setActiveTab('general-input')}
           >
             <MessageSquare size={18} />
             General Input
           </button>
-          <button 
+          <button
             className={`admin-tab ${activeTab === 'alerts' ? 'active' : ''}`}
             onClick={() => setActiveTab('alerts')}
           >
             <Bell size={18} />
             Alerts & Notices
           </button>
-          <button 
+          <button
             className={`admin-tab ${activeTab === 'departments' ? 'active' : ''}`}
             onClick={() => setActiveTab('departments')}
           >
@@ -547,438 +547,446 @@ const AdminPage = () => {
         {activeTab === 'complaints' && (
           <>
             <div className="status-summary slide-in-left stagger-1">
-          <div className="status-pill pending">
-            <AlertTriangle size={16} />
-            Pending <span>{statusCounts.pending}</span>
-          </div>
-          <div className="status-pill in_review">
-            <Clock size={16} />
-            In Review <span>{statusCounts.in_review}</span>
-          </div>
-          <div className="status-pill completed">
-            <CheckCircle size={16} />
-            Completed <span>{statusCounts.completed}</span>
-          </div>
-        </div>
-
-        <div className="filter-section slide-in-right stagger-2">
-          <button 
-            className="filter-toggle-btn secondary-btn"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <Filter size={16} />
-            {showFilters ? 'Hide Filters' : 'Show Filters'}
-            {Object.values(filters).some(v => v) && (
-              <span className="filter-count">{Object.values(filters).filter(v => v).length}</span>
-            )}
-          </button>
-
-          {showFilters && (
-            <div className="filter-panel">
-              <div className="filter-grid">
-                <div className="filter-group">
-                  <label>Severity</label>
-                  <select 
-                    value={filters.severity} 
-                    onChange={(e) => handleFilterChange('severity', e.target.value)}
-                  >
-                    <option value="">All</option>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="critical">Critical</option>
-                  </select>
-                </div>
-
-                <div className="filter-group">
-                  <label>Department</label>
-                  <select 
-                    value={filters.department} 
-                    onChange={(e) => handleFilterChange('department', e.target.value)}
-                  >
-                    <option value="">All</option>
-                    {departments.map((dept) => (
-                      <option key={dept._id} value={dept._id}>
-                        {dept.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="filter-group">
-                  <label>Status</label>
-                  <select 
-                    value={filters.status} 
-                    onChange={(e) => handleFilterChange('status', e.target.value)}
-                  >
-                    <option value="">All</option>
-                    <option value="pending">Pending</option>
-                    <option value="in_review">In Review</option>
-                    <option value="completed">Completed</option>
-                    <option value="reopened">Reopened</option>
-                  </select>
-                </div>
-
-                <div className="filter-group">
-                  <label>Recurrence</label>
-                  <select 
-                    value={filters.recurrence} 
-                    onChange={(e) => handleFilterChange('recurrence', e.target.value)}
-                  >
-                    <option value="">All</option>
-                    <option value="new">New</option>
-                    <option value="recurring">Recurring</option>
-                    <option value="ongoing">Ongoing</option>
-                  </select>
-                </div>
-
-                <div className="filter-group">
-                  <label>Date From</label>
-                  <input 
-                    type="date" 
-                    value={filters.dateFrom}
-                    onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
-                  />
-                </div>
-
-                <div className="filter-group">
-                  <label>Date To</label>
-                  <input 
-                    type="date" 
-                    value={filters.dateTo}
-                    onChange={(e) => handleFilterChange('dateTo', e.target.value)}
-                  />
-                </div>
+              <div className="status-pill pending">
+                <AlertTriangle size={16} />
+                Pending <span>{statusCounts.pending}</span>
               </div>
-
-              <div className="filter-actions">
-                <button className="ghost-btn" onClick={clearFilters}>
-                  <X size={16} />
-                  Clear All
-                </button>
-                <span className="filter-result-count">
-                  Showing {filteredItems.length} of {items.length} complaints
-                </span>
+              <div className="status-pill in_review">
+                <Clock size={16} />
+                In Review <span>{statusCounts.in_review}</span>
+              </div>
+              <div className="status-pill completed">
+                <CheckCircle size={16} />
+                Completed <span>{statusCounts.completed}</span>
               </div>
             </div>
-          )}
-        </div>
 
-        {status === 'loading' && <p className="loading-text">Loading issues...</p>}
-        {error && <p className="admin-error">{error}</p>}
+            <div className="filter-section slide-in-right stagger-2">
+              <button
+                className="filter-toggle-btn secondary-btn"
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                <Filter size={16} />
+                {showFilters ? 'Hide Filters' : 'Show Filters'}
+                {Object.values(filters).some(v => v) && (
+                  <span className="filter-count">{Object.values(filters).filter(v => v).length}</span>
+                )}
+              </button>
 
-        <div className="issue-list">
-          {paginatedItems.map((issue, idx) => (
-            <div key={issue._id} className={`issue-card hover-float fade-scale stagger-${Math.min(idx + 1, 5)}`}>
-              <div className="issue-header">
-                <div>
-                  <h3>{issue.issueType}</h3>
-                  <p className="issue-meta">
-                    <MapPin size={14} />
-                    {issue.location}
-                    <span>•</span>
-                    <AlertTriangle size={14} />
-                    Severity: <span className={`severity-badge severity-${issue.severity}`}>{issue.severity}</span>
-                  </p>
-                  <p className="issue-meta">
-                    <code>CV-{issue._id.slice(-6).toUpperCase()}</code>
-                  </p>
+              {showFilters && (
+                <div className="filter-panel">
+                  <div className="filter-grid">
+                    <div className="filter-group">
+                      <label>Severity</label>
+                      <select
+                        value={filters.severity}
+                        onChange={(e) => handleFilterChange('severity', e.target.value)}
+                      >
+                        <option value="">All</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                      </select>
+                    </div>
+
+                    <div className="filter-group">
+                      <label>Department</label>
+                      <select
+                        value={filters.department}
+                        onChange={(e) => handleFilterChange('department', e.target.value)}
+                      >
+                        <option value="">All</option>
+                        {departments.map((dept) => (
+                          <option key={dept._id} value={dept._id}>
+                            {dept.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="filter-group">
+                      <label>Status</label>
+                      <select
+                        value={filters.status}
+                        onChange={(e) => handleFilterChange('status', e.target.value)}
+                      >
+                        <option value="">All</option>
+                        <option value="pending">Pending</option>
+                        <option value="in_review">In Review</option>
+                        <option value="completed">Completed</option>
+                        <option value="reopened">Reopened</option>
+                      </select>
+                    </div>
+
+                    <div className="filter-group">
+                      <label>Recurrence</label>
+                      <select
+                        value={filters.recurrence}
+                        onChange={(e) => handleFilterChange('recurrence', e.target.value)}
+                      >
+                        <option value="">All</option>
+                        <option value="new">New</option>
+                        <option value="recurring">Recurring</option>
+                        <option value="ongoing">Ongoing</option>
+                      </select>
+                    </div>
+
+                    <div className="filter-group">
+                      <label>Date From</label>
+                      <input
+                        type="date"
+                        value={filters.dateFrom}
+                        onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
+                      />
+                    </div>
+
+                    <div className="filter-group">
+                      <label>Date To</label>
+                      <input
+                        type="date"
+                        value={filters.dateTo}
+                        onChange={(e) => handleFilterChange('dateTo', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="filter-actions">
+                    <button className="ghost-btn" onClick={clearFilters}>
+                      <X size={16} />
+                      Clear All
+                    </button>
+                    <span className="filter-result-count">
+                      Showing {filteredItems.length} of {items.length} complaints
+                    </span>
+                  </div>
                 </div>
-                <span className={`status-badge status-${issue.status}`}>
-                  {issue.status.replace('_', ' ')}
-                </span>
+              )}
+            </div>
+
+            {status === 'loading' && <p className="loading-text">Loading issues...</p>}
+            {error && <p className="admin-error">{error}</p>}
+
+            {status === 'succeeded' && paginatedItems.length === 0 && !error && (
+              <div style={{ textAlign: 'center', padding: '3rem', opacity: 0.7 }} className="fade-in">
+                <FileText size={48} style={{ margin: '0 auto 1rem', display: 'block' }} />
+                <h3>No complaints found</h3>
+                <p>There are no complaints matching your current filters.</p>
               </div>
-              <p className="issue-summary">{issue.summary}</p>
-              {issue.geoLocation?.latitude && issue.geoLocation?.longitude && (
-                <div className="issue-map-display">
-                  <div className="map-header">
-                    <span className="map-label">Pinned location</span>
-                    <button 
-                      className="map-expand-btn"
-                      onClick={() => setExpandedMap(issue.geoLocation)}
-                      title="Expand map"
+            )}
+
+            <div className="issue-list">
+              {paginatedItems.map((issue, idx) => (
+                <div key={issue._id} className={`issue-card hover-float fade-scale stagger-${Math.min(idx + 1, 5)}`}>
+                  <div className="issue-header">
+                    <div>
+                      <h3>{issue.issueType}</h3>
+                      <p className="issue-meta">
+                        <MapPin size={14} />
+                        {issue.location}
+                        <span>•</span>
+                        <AlertTriangle size={14} />
+                        Severity: <span className={`severity-badge severity-${issue.severity}`}>{issue.severity}</span>
+                      </p>
+                      <p className="issue-meta">
+                        <code>CV-{issue._id.slice(-6).toUpperCase()}</code>
+                      </p>
+                    </div>
+                    <span className={`status-badge status-${issue.status}`}>
+                      {issue.status.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <p className="issue-summary">{issue.summary}</p>
+                  {issue.geoLocation?.latitude && issue.geoLocation?.longitude && (
+                    <div className="issue-map-display">
+                      <div className="map-header">
+                        <span className="map-label">Pinned location</span>
+                        <button
+                          className="map-expand-btn"
+                          onClick={() => setExpandedMap(issue.geoLocation)}
+                          title="Expand map"
+                        >
+                          <Maximize2 size={16} />
+                        </button>
+                      </div>
+                      <LocationPicker
+                        value={issue.geoLocation}
+                        readOnly
+                        showLocateButton={false}
+                        label=""
+                        helperText=""
+                        height={300}
+                      />
+                    </div>
+                  )}
+                  {issue.forwardedTo && (
+                    <p className="issue-meta">
+                      <Building2 size={14} />
+                      Forwarded to: <strong>{issue.forwardedTo.name}</strong>
+                    </p>
+                  )}
+                  {(issue.contactName || issue.contactPhone || issue.contactEmail) && (
+                    <div className="complainant-details">
+                      <h4>
+                        <User size={14} />
+                        Complainant Details
+                      </h4>
+                      <div className="contact-info">
+                        {issue.contactName && (
+                          <p className="contact-item">
+                            <User size={14} />
+                            <span className="contact-label">Name:</span>
+                            <span className="contact-value">{issue.contactName}</span>
+                          </p>
+                        )}
+                        {issue.contactPhone && (
+                          <p className="contact-item">
+                            <Phone size={14} />
+                            <span className="contact-label">Phone:</span>
+                            <span className="contact-value">{issue.contactPhone}</span>
+                          </p>
+                        )}
+                        {issue.contactEmail && (
+                          <p className="contact-item">
+                            <Mail size={14} />
+                            <span className="contact-label">Email:</span>
+                            <span className="contact-value">{issue.contactEmail}</span>
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {issue.evidenceUrls && issue.evidenceUrls.length > 0 && (
+                    <div className="issue-evidence">
+                      <h4>
+                        <FileText size={14} />
+                        Evidence ({issue.evidenceUrls.length})
+                      </h4>
+                      <div className="evidence-links">
+                        {issue.evidenceUrls.map((url, idx) => (
+                          <a
+                            key={idx}
+                            href={`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${url}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="evidence-link"
+                          >
+                            <FileText size={14} />
+                            Evidence {idx + 1}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {issue.resolutionEvidence && issue.resolutionEvidence.length > 0 && (
+                    <div className="resolution-evidence-section">
+                      <h4>
+                        <ImageIcon size={14} />
+                        Resolution Evidence
+                      </h4>
+                      <div className="resolution-evidence-grid">
+                        {issue.resolutionEvidence.map((url, idx) => (
+                          <div
+                            key={idx}
+                            className="resolution-evidence-item"
+                            onClick={() => setSelectedImage(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${url}`)}
+                          >
+                            <img
+                              src={`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${url}`}
+                              alt={`Resolution ${idx + 1}`}
+                            />
+                            <span className="evidence-overlay">
+                              <ImageIcon size={16} />
+                              View
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {issue.departmentUpdates && issue.departmentUpdates.length > 0 && (
+                    <div className="issue-timeline">
+                      <h4>
+                        <MessageSquare size={14} />
+                        Department Updates
+                      </h4>
+                      <ul>
+                        {issue.departmentUpdates.map((u, idx) => (
+                          <li key={idx}>
+                            <span className="timeline-time">
+                              {formatDateTime(u.createdAt)}
+                            </span>
+                            <span className="timeline-text">
+                              <span className={`status-badge status-${u.status}`}>
+                                {u.status.replace('_', ' ')}
+                              </span>
+                              {u.text}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {issue.rating && (
+                    <div className="existing-rating">
+                      <h4>
+                        <Star size={14} />
+                        Citizen Rating & Review
+                      </h4>
+                      <div className="stars-display">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            size={20}
+                            fill={star <= issue.rating ? '#fbbf24' : 'none'}
+                            color={star <= issue.rating ? '#fbbf24' : '#d1d5db'}
+                          />
+                        ))}
+                        <span className="rating-value">({issue.rating}/5)</span>
+                      </div>
+                      {issue.review && (
+                        <div className="review-text">
+                          <p>"{issue.review}"</p>
+                          {issue.reviewedAt && (
+                            <span className="review-date">
+                              Submitted on {formatDateTime(issue.reviewedAt)}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <div className="issue-actions">
+                    <select
+                      value={issue.forwardedTo?._id || ''}
+                      onChange={(e) => handleForward(issue._id, e.target.value)}
                     >
-                      <Maximize2 size={16} />
+                      <option value="">
+                        <Send size={14} /> Forward to department...
+                      </option>
+                      {departments.map((dept) => (
+                        <option key={dept._id} value={dept._id}>
+                          {dept.name}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={issue.status}
+                      onChange={(e) => handleStatusChange(issue._id, e.target.value)}
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="in_review">In Review</option>
+                      <option value="completed">Completed</option>
+                    </select>
+                    <button
+                      type="button"
+                      className="ghost-btn delete-issue-btn"
+                      onClick={() => handleDeleteIssue(issue._id)}
+                      title="Delete this complaint"
+                    >
+                      <Trash2 size={16} />
+                      Delete
                     </button>
                   </div>
-                  <LocationPicker
-                    value={issue.geoLocation}
-                    readOnly
-                    showLocateButton={false}
-                    label=""
-                    helperText=""
-                    height={300}
-                  />
-                </div>
-              )}
-              {issue.forwardedTo && (
-                <p className="issue-meta">
-                  <Building2 size={14} />
-                  Forwarded to: <strong>{issue.forwardedTo.name}</strong>
-                </p>
-              )}
-              {(issue.contactName || issue.contactPhone || issue.contactEmail) && (
-                <div className="complainant-details">
-                  <h4>
-                    <User size={14} />
-                    Complainant Details
-                  </h4>
-                  <div className="contact-info">
-                    {issue.contactName && (
-                      <p className="contact-item">
-                        <User size={14} />
-                        <span className="contact-label">Name:</span>
-                        <span className="contact-value">{issue.contactName}</span>
-                      </p>
-                    )}
-                    {issue.contactPhone && (
-                      <p className="contact-item">
-                        <Phone size={14} />
-                        <span className="contact-label">Phone:</span>
-                        <span className="contact-value">{issue.contactPhone}</span>
-                      </p>
-                    )}
-                    {issue.contactEmail && (
-                      <p className="contact-item">
-                        <Mail size={14} />
-                        <span className="contact-label">Email:</span>
-                        <span className="contact-value">{issue.contactEmail}</span>
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-              {issue.evidenceUrls && issue.evidenceUrls.length > 0 && (
-                <div className="issue-evidence">
-                  <h4>
-                    <FileText size={14} />
-                    Evidence ({issue.evidenceUrls.length})
-                  </h4>
-                  <div className="evidence-links">
-                    {issue.evidenceUrls.map((url, idx) => (
-                      <a
-                        key={idx}
-                        href={`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${url}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="evidence-link"
-                      >
-                        <FileText size={14} />
-                        Evidence {idx + 1}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {issue.resolutionEvidence && issue.resolutionEvidence.length > 0 && (
-                <div className="resolution-evidence-section">
-                  <h4>
-                    <ImageIcon size={14} />
-                    Resolution Evidence
-                  </h4>
-                  <div className="resolution-evidence-grid">
-                    {issue.resolutionEvidence.map((url, idx) => (
-                      <div
-                        key={idx}
-                        className="resolution-evidence-item"
-                        onClick={() => setSelectedImage(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${url}`)}
-                      >
-                        <img
-                          src={`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${url}`}
-                          alt={`Resolution ${idx + 1}`}
-                        />
-                        <span className="evidence-overlay">
-                          <ImageIcon size={16} />
-                          View
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {issue.departmentUpdates && issue.departmentUpdates.length > 0 && (
-                <div className="issue-timeline">
-                  <h4>
-                    <MessageSquare size={14} />
-                    Department Updates
-                  </h4>
-                  <ul>
-                    {issue.departmentUpdates.map((u, idx) => (
-                      <li key={idx}>
-                        <span className="timeline-time">
-                          {formatDateTime(u.createdAt)}
-                        </span>
-                        <span className="timeline-text">
-                          <span className={`status-badge status-${u.status}`}>
-                            {u.status.replace('_', ' ')}
-                          </span>
-                          {u.text}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {issue.rating && (
-                <div className="existing-rating">
-                  <h4>
-                    <Star size={14} />
-                    Citizen Rating & Review
-                  </h4>
-                  <div className="stars-display">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        size={20}
-                        fill={star <= issue.rating ? '#fbbf24' : 'none'}
-                        color={star <= issue.rating ? '#fbbf24' : '#d1d5db'}
-                      />
-                    ))}
-                    <span className="rating-value">({issue.rating}/5)</span>
-                  </div>
-                  {issue.review && (
-                    <div className="review-text">
-                      <p>"{issue.review}"</p>
-                      {issue.reviewedAt && (
-                        <span className="review-date">
-                          Submitted on {formatDateTime(issue.reviewedAt)}
-                        </span>
+                  {issue.status === 'completed' && (
+                    <div className="reopen-section">
+                      {!showReopenForm[issue._id] ? (
+                        <button
+                          className="reopen-btn"
+                          onClick={() => handleReopenToggle(issue._id)}
+                        >
+                          <RotateCcw size={16} />
+                          Reopen Issue
+                        </button>
+                      ) : (
+                        <div className="reopen-form">
+                          <textarea
+                            rows={3}
+                            placeholder="Please explain why you're reopening this issue..."
+                            value={reopenComments[issue._id] || ''}
+                            onChange={(e) => handleReopenCommentChange(issue._id, e.target.value)}
+                          />
+                          <div className="reopen-form-actions">
+                            <button
+                              className="reopen-submit-btn"
+                              onClick={() => handleReopenSubmit(issue._id)}
+                            >
+                              <RotateCcw size={16} />
+                              Submit Reopen Request
+                            </button>
+                            <button
+                              className="reopen-cancel-btn"
+                              onClick={() => handleReopenToggle(issue._id)}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
                       )}
                     </div>
                   )}
                 </div>
+              ))}
+              {filteredItems.length === 0 && items.length === 0 && status !== 'loading' && (
+                <p className="no-issues">
+                  <FileText size={24} />
+                  No issues yet. Ask citizens to submit one via the chat or quick form.
+                </p>
               )}
-              <div className="issue-actions">
-                <select
-                  value={issue.forwardedTo?._id || ''}
-                  onChange={(e) => handleForward(issue._id, e.target.value)}
-                >
-                  <option value="">
-                    <Send size={14} /> Forward to department...
-                  </option>
-                  {departments.map((dept) => (
-                    <option key={dept._id} value={dept._id}>
-                      {dept.name}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={issue.status}
-                  onChange={(e) => handleStatusChange(issue._id, e.target.value)}
-                >
-                  <option value="pending">Pending</option>
-                  <option value="in_review">In Review</option>
-                  <option value="completed">Completed</option>
-                </select>
+            </div>
+
+            {/* Pagination Controls */}
+            {filteredItems.length > 0 && totalPages > 1 && (
+              <div className="pagination">
                 <button
-                  type="button"
-                  className="ghost-btn delete-issue-btn"
-                  onClick={() => handleDeleteIssue(issue._id)}
-                  title="Delete this complaint"
+                  className="pagination-btn"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
                 >
-                  <Trash2 size={16} />
-                  Delete
+                  Previous
                 </button>
-              </div>
-              {issue.status === 'completed' && (
-                <div className="reopen-section">
-                  {!showReopenForm[issue._id] ? (
-                    <button
-                      className="reopen-btn"
-                      onClick={() => handleReopenToggle(issue._id)}
-                    >
-                      <RotateCcw size={16} />
-                      Reopen Issue
-                    </button>
-                  ) : (
-                    <div className="reopen-form">
-                      <textarea
-                        rows={3}
-                        placeholder="Please explain why you're reopening this issue..."
-                        value={reopenComments[issue._id] || ''}
-                        onChange={(e) => handleReopenCommentChange(issue._id, e.target.value)}
-                      />
-                      <div className="reopen-form-actions">
+
+                <div className="pagination-numbers">
+                  {[...Array(totalPages)].map((_, index) => {
+                    const pageNumber = index + 1;
+                    // Show first page, last page, current page, and pages around current
+                    if (
+                      pageNumber === 1 ||
+                      pageNumber === totalPages ||
+                      (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                    ) {
+                      return (
                         <button
-                          className="reopen-submit-btn"
-                          onClick={() => handleReopenSubmit(issue._id)}
+                          key={pageNumber}
+                          className={`pagination-number ${currentPage === pageNumber ? 'active' : ''}`}
+                          onClick={() => handlePageChange(pageNumber)}
                         >
-                          <RotateCcw size={16} />
-                          Submit Reopen Request
+                          {pageNumber}
                         </button>
-                        <button
-                          className="reopen-cancel-btn"
-                          onClick={() => handleReopenToggle(issue._id)}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                      );
+                    } else if (
+                      pageNumber === currentPage - 2 ||
+                      pageNumber === currentPage + 2
+                    ) {
+                      return <span key={pageNumber} className="pagination-ellipsis">...</span>;
+                    }
+                    return null;
+                  })}
                 </div>
-              )}
-            </div>
-          ))}
-          {filteredItems.length === 0 && items.length === 0 && status !== 'loading' && (
-            <p className="no-issues">
-              <FileText size={24} />
-              No issues yet. Ask citizens to submit one via the chat or quick form.
-            </p>
-          )}
-        </div>
 
-        {/* Pagination Controls */}
-        {filteredItems.length > 0 && totalPages > 1 && (
-          <div className="pagination">
-            <button
-              className="pagination-btn"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            
-            <div className="pagination-numbers">
-              {[...Array(totalPages)].map((_, index) => {
-                const pageNumber = index + 1;
-                // Show first page, last page, current page, and pages around current
-                if (
-                  pageNumber === 1 ||
-                  pageNumber === totalPages ||
-                  (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
-                ) {
-                  return (
-                    <button
-                      key={pageNumber}
-                      className={`pagination-number ${currentPage === pageNumber ? 'active' : ''}`}
-                      onClick={() => handlePageChange(pageNumber)}
-                    >
-                      {pageNumber}
-                    </button>
-                  );
-                } else if (
-                  pageNumber === currentPage - 2 ||
-                  pageNumber === currentPage + 2
-                ) {
-                  return <span key={pageNumber} className="pagination-ellipsis">...</span>;
-                }
-                return null;
-              })}
-            </div>
+                <button
+                  className="pagination-btn"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
 
-            <button
-              className="pagination-btn"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-
-            <span className="pagination-info">
-              Page {currentPage} of {totalPages} • {filteredItems.length} total records
-            </span>
-          </div>
-        )}
+                <span className="pagination-info">
+                  Page {currentPage} of {totalPages} • {filteredItems.length} total records
+                </span>
+              </div>
+            )}
           </>
         )}
 
@@ -989,7 +997,7 @@ const AdminPage = () => {
               <h3>General Input</h3>
             </div>
             <p className="admin-section-text">
-              Submit unstructured complaint text directly from SMS, WhatsApp, emails, or other sources. 
+              Submit unstructured complaint text directly from SMS, WhatsApp, emails, or other sources.
               The system will process and extract structured data using AI.
             </p>
             <form className="general-input-form" onSubmit={handleGeneralInputSubmit}>
@@ -1002,8 +1010,8 @@ const AdminPage = () => {
                 disabled={isProcessing}
               />
               <div className="form-actions-row">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="ghost-btn evidence-btn"
                   onClick={() => setShowEvidenceModal(true)}
                   disabled={isProcessing}
@@ -1028,7 +1036,7 @@ const AdminPage = () => {
                   )}
                 </button>
               </div>
-              
+
               {pendingEvidenceFiles.length > 0 && (
                 <div className="attached-files-preview">
                   <h4>Attached Files ({pendingEvidenceFiles.length}/3)</h4>
@@ -1037,9 +1045,9 @@ const AdminPage = () => {
                       <div key={index} className="file-preview-item">
                         {getFileIcon(file)}
                         <span className="file-preview-name">{file.name}</span>
-                        <button 
+                        <button
                           type="button"
-                          className="remove-file-btn" 
+                          className="remove-file-btn"
                           onClick={() => removeEvidenceFile(index)}
                         >
                           <X size={14} />
@@ -1207,8 +1215,8 @@ const AdminPage = () => {
                   </div>
 
                   <div className="form-actions">
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="secondary-btn create-complaint-btn"
                       onClick={handleCreateComplaint}
                       disabled={isProcessing}
@@ -1225,8 +1233,8 @@ const AdminPage = () => {
                         </>
                       )}
                     </button>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="ghost-btn"
                       onClick={() => {
                         setStructuredData(null);
@@ -1248,99 +1256,99 @@ const AdminPage = () => {
 
         {activeTab === 'departments' && (
           <div className="admin-section">
-          <div className="admin-section-header">
-            <UserPlus size={20} />
-            <h3>Department Accounts</h3>
-          </div>
-          <p className="admin-section-text">
-            Create and manage department login accounts that will receive forwarded
-            complaints.
-          </p>
-          <form className="dept-user-form" onSubmit={handleCreateDeptUser}>
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={newDeptUser.name}
-              onChange={onChangeNewDeptUser}
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={newDeptUser.email}
-              onChange={onChangeNewDeptUser}
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={newDeptUser.password}
-              onChange={onChangeNewDeptUser}
-            />
-            <input
-              type="text"
-              name="departmentName"
-              placeholder="Department Name (e.g., Water Supply, Roads)"
-              value={newDeptUser.departmentName}
-              onChange={onChangeNewDeptUser}
-            />
-            <button type="submit" className="secondary-btn">
-              <UserPlus size={16} />
-              Create Account
-            </button>
-          </form>
-          {deptUserMessage && (
-            <p className="admin-message ok">
-              <CheckCircle size={16} />
-              {deptUserMessage}
+            <div className="admin-section-header">
+              <UserPlus size={20} />
+              <h3>Department Accounts</h3>
+            </div>
+            <p className="admin-section-text">
+              Create and manage department login accounts that will receive forwarded
+              complaints.
             </p>
-          )}
-          {deptUserError && (
-            <p className="admin-message error">
-              <AlertTriangle size={16} />
-              {deptUserError}
-            </p>
-          )}
-
-          <div className="dept-users-list">
-            {departmentUsers.length === 0 && (
-              <p className="no-issues">
-                <Building2 size={20} />
-                No department accounts yet.
+            <form className="dept-user-form" onSubmit={handleCreateDeptUser}>
+              <input
+                type="text"
+                name="name"
+                placeholder="Name"
+                value={newDeptUser.name}
+                onChange={onChangeNewDeptUser}
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={newDeptUser.email}
+                onChange={onChangeNewDeptUser}
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={newDeptUser.password}
+                onChange={onChangeNewDeptUser}
+              />
+              <input
+                type="text"
+                name="departmentName"
+                placeholder="Department Name (e.g., Water Supply, Roads)"
+                value={newDeptUser.departmentName}
+                onChange={onChangeNewDeptUser}
+              />
+              <button type="submit" className="secondary-btn">
+                <UserPlus size={16} />
+                Create Account
+              </button>
+            </form>
+            {deptUserMessage && (
+              <p className="admin-message ok">
+                <CheckCircle size={16} />
+                {deptUserMessage}
               </p>
             )}
-            {departmentUsers.map((u) => (
-              <div key={u._id} className="dept-user-row hover-float">
-                <div className="dept-user-main">
-                  <div className="dept-user-name">{u.name}</div>
-                  <div className="dept-user-email">{u.email}</div>
+            {deptUserError && (
+              <p className="admin-message error">
+                <AlertTriangle size={16} />
+                {deptUserError}
+              </p>
+            )}
+
+            <div className="dept-users-list">
+              {departmentUsers.length === 0 && (
+                <p className="no-issues">
+                  <Building2 size={20} />
+                  No department accounts yet.
+                </p>
+              )}
+              {departmentUsers.map((u) => (
+                <div key={u._id} className="dept-user-row hover-float">
+                  <div className="dept-user-main">
+                    <div className="dept-user-name">{u.name}</div>
+                    <div className="dept-user-email">{u.email}</div>
+                  </div>
+                  <div className="dept-user-controls">
+                    <select
+                      value={u.department?._id || ''}
+                      onChange={(e) => handleChangeDeptForUser(u._id, e.target.value)}
+                    >
+                      <option value="">Assign department...</option>
+                      {departments.map((dept) => (
+                        <option key={dept._id} value={dept._id}>
+                          {dept.name}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      className="dept-user-delete ghost-btn"
+                      onClick={() => handleDeleteDeptUser(u._id)}
+                    >
+                      <Trash2 size={14} />
+                      Delete
+                    </button>
+                  </div>
                 </div>
-                <div className="dept-user-controls">
-                  <select
-                    value={u.department?._id || ''}
-                    onChange={(e) => handleChangeDeptForUser(u._id, e.target.value)}
-                  >
-                    <option value="">Assign department...</option>
-                    {departments.map((dept) => (
-                      <option key={dept._id} value={dept._id}>
-                        {dept.name}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="button"
-                    className="dept-user-delete ghost-btn"
-                    onClick={() => handleDeleteDeptUser(u._id)}
-                  >
-                    <Trash2 size={14} />
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
         )}
 
         {activeTab === 'alerts' && (
@@ -1354,7 +1362,7 @@ const AdminPage = () => {
             </p>
 
             {!showAlertForm ? (
-              <button 
+              <button
                 className="secondary-btn"
                 onClick={() => {
                   setShowAlertForm(true);
@@ -1422,8 +1430,8 @@ const AdminPage = () => {
                     <Save size={16} />
                     {editingAlert ? 'Update Alert' : 'Create Alert'}
                   </button>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="ghost-btn"
                     onClick={() => {
                       setShowAlertForm(false);
@@ -1527,7 +1535,7 @@ const AdminPage = () => {
               <p className="modal-info">
                 Upload up to 3 files (JPG, PNG, PDF, or MP4). Max 50MB per file.
               </p>
-              
+
               {evidenceUploadErrors.length > 0 && (
                 <div className="upload-errors">
                   {evidenceUploadErrors.map((error, i) => (
@@ -1540,8 +1548,8 @@ const AdminPage = () => {
                 <label className={`file-upload-label ${pendingEvidenceFiles.length >= 3 ? 'disabled' : ''}`}>
                   <FileUp size={32} />
                   <span>
-                    {pendingEvidenceFiles.length >= 3 
-                      ? 'Maximum 3 files reached. Remove files to add new ones.' 
+                    {pendingEvidenceFiles.length >= 3
+                      ? 'Maximum 3 files reached. Remove files to add new ones.'
                       : 'Click to select files'}
                   </span>
                   <input
@@ -1567,9 +1575,9 @@ const AdminPage = () => {
                           <p className="file-size">{formatFileSize(file.size)}</p>
                         </div>
                       </div>
-                      <button 
+                      <button
                         type="button"
-                        className="remove-file-btn" 
+                        className="remove-file-btn"
                         onClick={() => removeEvidenceFile(index)}
                       >
                         <X size={16} />
@@ -1580,8 +1588,8 @@ const AdminPage = () => {
               )}
             </div>
             <div className="modal-footer">
-              <button 
-                className="primary-btn" 
+              <button
+                className="primary-btn"
                 onClick={() => setShowEvidenceModal(false)}
               >
                 Done

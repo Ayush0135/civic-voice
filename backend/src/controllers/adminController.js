@@ -2,10 +2,12 @@
 const User = require('../models/User');
 const Department = require('../models/Department');
 const Issue = require('../models/Issue');
-const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({
+  model: 'gemini-1.5-flash',
+  generationConfig: { responseMimeType: 'application/json' }
 });
 
 const createAdminUser = async (req, res) => {
@@ -145,13 +147,8 @@ const processGeneralInput = async (req, res) => {
       return res.status(400).json({ message: 'Text input is required' });
     }
 
-    // Use OpenAI to parse the unstructured text into structured complaint data
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'system',
-          content: `You are an assistant that extracts structured complaint information from unstructured text (SMS, WhatsApp, emails, etc.). 
+    // Use Gemini to parse the unstructured text into structured complaint data
+    const prompt = `You are an assistant that extracts structured complaint information from unstructured text (SMS, WhatsApp, emails, etc.). 
 Extract the following fields and return ONLY a valid JSON object (no markdown, no code blocks, no explanation):
 {
   "issueType": "string (e.g., 'Water Supply Issue', 'Road Damage', 'Electricity Problem', 'Garbage Collection', 'Street Light', etc.)",
@@ -173,18 +170,13 @@ Rules:
 - For severity: 'critical' if words like 'emergency', 'danger', 'urgent'; 'high' if 'urgent', 'important'; 'medium' if moderately urgent; 'low' otherwise
 - For issueType: categorize based on keywords (water/pipe = Water Supply, road/pothole = Road Damage, etc.)
 - For recurrence: 'ongoing' if mentions duration, 'recurring' if mentions 'again' or 'repeated', otherwise 'new'
-- Preserve exact phone numbers and emails as found in text`,
-        },
-        {
-          role: 'user',
-          content: text,
-        },
-      ],
-      temperature: 0.3,
-      response_format: { type: 'json_object' },
-    });
+- Preserve exact phone numbers and emails as found in text
 
-    const parsedData = JSON.parse(completion.choices[0].message.content);
+Text to process:
+${text}`;
+
+    const result = await model.generateContent(prompt);
+    const parsedData = JSON.parse(result.response.text());
 
     // Validate and structure the data
     const structuredData = {
