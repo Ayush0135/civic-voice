@@ -20,7 +20,7 @@ Use these exact keys and values when setting up your Environment Variables on **
 
 | Key | Value |
 | :--- | :--- |
-| **`VITE_API_URL`** | `https://civic-voice-onsm.onrender.com/api` |
+| **`VITE_API_URL`** | `https://civic-voice-1.onrender.com/api` |
 
 ---
 

@@ -25,7 +25,7 @@ This project is a monorepo containing both a **Vite Frontend** and a **Node.js B
 3. **Root Directory**: Select `frontend`.
 4. **Framework Preset**: Vite.
 5. Add **Environment Variables**:
-   - `VITE_API_URL`: Your Backend URL + `/api` (e.g., `https://civic-voice-api.onrender.com/api`)
+   - `VITE_API_URL`: Your Backend URL + `/api` (e.g., `https://civic-voice-1.onrender.com/api`)
 6. Deploy!
 
 ---
